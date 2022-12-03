@@ -92,33 +92,69 @@ void mergeSort(Point vetor[], int comeco, int fim){
 
 int main(){
    // Define dados
-   int quantidade_Pontos;
-   int ponto1;
-   int ponto2;
-   float distancia;
+   int quantidade_Pontos = 0;
+   int escolha = 0;
+   int ponto1 = 0;
+   int ponto2 = 0;
+   float distancia = 0;
    float menor_distancia = FLT_MAX;
+   Point *pontos;
+   Point *pontosx;
+   Point *pontosy;
    // Define Timer
    clock_t start, end;
    double cpu_time_used;
    
 
-   printf("Entrar com quantidade de Pontos (limite: 128 pontos):");
+   printf("Entrar com quantidade de Pontos:");
    scanf("%d", &quantidade_Pontos);
+   
+   printf("Em qual complexidade? O(n^2) = 0; O(n * log n) = 1; \n");
+   scanf("%d", &escolha);
 
-   Point pontos[quantidade_Pontos];
-   Point pontosx[quantidade_Pontos];
-   Point pontosy[quantidade_Pontos];
+   if(escolha < 1){
+        pontos = (Point*)malloc(quantidade_Pontos * sizeof(Point));
+        for(int i = 0; i < quantidade_Pontos; i++){  
+            pontos[i].x = rand() % (quantidade_Pontos+1);
+            pontos[i].y = rand() % (quantidade_Pontos+1);
+        }
+        
+        start = clock();
+        for (int i = 0; i < quantidade_Pontos; i++){
+            for (int j = 0; j < quantidade_Pontos; j++)
+            {
+                if (i != j)
+                {
+                    // Calcular a distacia euclidiana entre dois pontos
+                    distancia = sqrt(pow(pontos[j].x - pontos[i].x, 2) + pow(pontos[j].y - pontos[i].y, 2));
 
-   for(int i = 0; i < quantidade_Pontos; i++){
-    //printf("Entrar com coordenada x e y:");
-    //scanf("%d%d", &x, &y);   
-    pontos[i].x = rand() % (quantidade_Pontos+1);
-    pontos[i].y = rand() % (quantidade_Pontos+1);
-    pontosx[i].x = pontos[i].x;
-    pontosx[i].y = pontos[i].y;
-    pontosy[i].x = pontos[i].x;
-    pontosy[i].y = pontos[i].y;
-   }
+                    if (distancia < menor_distancia)
+                    {
+                        ponto1 = i;
+                        ponto2 = j;
+                        menor_distancia = distancia;
+                    }
+                }
+            }
+        }
+        //Terminar timer
+        end = clock();
+        //Calcular tempo em segundos
+        cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+
+        }else{
+        //Criar dois vetores para serem ordenados de acordo com x e com y
+        pontosx = (Point*)malloc(quantidade_Pontos * sizeof(Point));
+        pontosy = (Point*)malloc(quantidade_Pontos * sizeof(Point));
+        for(int i = 0; i < quantidade_Pontos; i++){
+        pontosx[i].x = rand() % (quantidade_Pontos+1);
+        pontosx[i].y = rand() % (quantidade_Pontos+1);
+        pontosy[i].x = pontosx[i].x;
+        pontosy[i].y = pontosx[i].y;
+        }
+
+        }
+
    
    /*
     * Primeiro fazemos um mergesort
@@ -127,34 +163,22 @@ int main(){
     qualCoordenada += 1; 
     mergeSort(pontosy, 0, quantidade_Pontos);
    */
-   //Comecar timer do n^2
-   start = clock();
-   for(int i = 0; i < quantidade_Pontos; i++){
-       for(int j = 0; j < quantidade_Pontos; j++){
-          if(i != j){
-          //Calcular a distacia euclidiana entre dois pontos
-          distancia = sqrt(pow(pontos[j].x-pontos[i].x,2) + pow(pontos[j].y-pontos[i].y,2));
-        
-          if(distancia < menor_distancia){
-            ponto1 = i;
-            ponto2 = j;
-            menor_distancia = distancia;
-            }
-          }
-       }
-   }
-   //Terminar timer
-   end = clock();
-
-   cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+   
      //Printar os pontos
-    for(int i = 0; i < quantidade_Pontos; i++){
-        printf("Ponto(%d) = (%d,%d)\n", i, pontosy[i].x, pontosy[i].y);
-    }
+    /*for(int i = 0; i < quantidade_Pontos; i++){
+        printf("Ponto(%d) = (%d,%d)\n", i, pontos[i].x, pontos[i].y);
+    }*/
 
     //Printar os pontos mais próximos   
     printf("Os pontos mais proximos sao o Ponto(%d) = (%d,%d) e Ponto(%d) = (%d,%d)\n E o tempo para execucao foi de %lf segundos", 
             ponto1, pontos[ponto1].x, pontos[ponto1].y, ponto2, pontos[ponto2].x, pontos[ponto2].y, cpu_time_used);
     
+    if(escolha < 1){
+        free(pontos);
+    } else{
+        free(pontosx);
+        free(pontosy);
+    }
+
     return 0;
 }
